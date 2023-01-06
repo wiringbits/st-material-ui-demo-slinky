@@ -3,7 +3,7 @@ import org.scalajs.linker.interface.ModuleSplitStyle
 val publicDev = taskKey[String]("output directory for `npm run dev`")
 val publicProd = taskKey[String]("output directory for `npm run build`")
 
-lazy val `st-material-ui-demo` = project
+lazy val `st-material-ui-demo-slinky` = project
   .in(file("."))
   .enablePlugins(ScalaJSPlugin)
   .settings(
@@ -13,7 +13,7 @@ lazy val `st-material-ui-demo` = project
     scalaJSLinkerConfig ~= {
       _.withModuleKind(ModuleKind.ESModule)
         .withModuleSplitStyle(
-          ModuleSplitStyle.SmallModulesFor(List("st-material-ui-demo"))
+          ModuleSplitStyle.SmallModulesFor(List("st-material-ui-demo-slinky"))
         )
     },
     resolvers += MavenRepository(
