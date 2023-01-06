@@ -8,29 +8,27 @@ import com.olvind.mui.muiMaterial.stylesCreateThemeMod.Theme
 import com.olvind.mui.muiSystem.styleFunctionSxStyleFunctionSxMod.SystemCssProperties
 import com.olvind.mui.react.mod.{DetailedHTMLProps, HTMLAttributes}
 import com.olvind.mui.react.components.div
-import japgolly.scalajs.react.{PropsChildren, ScalaFnComponent}
-import japgolly.scalajs.react.facade.SyntheticEvent
-import japgolly.scalajs.react.hooks.Hooks.UseStateWithReuse
 import org.scalajs.dom.{Element, HTMLDivElement}
-import japgolly.scalajs.react.vdom.VdomNode
-import japgolly.scalajs.react.vdom.all.TagMod
-import japgolly.scalajs.react.vdom.Implicits.*
+
+import slinky.core._
+import slinky.core.facade._
 
 import scala.scalajs.js
 
 object Tabs {
-  case class TabPanelProps(index: Int, value: Int)
+  case class TabPanelProps(index: Int, value: Int, children: List[ReactElement])
 
-  val TabPanel = ScalaFnComponent.withChildren[TabPanelProps] { case (TabPanelProps(index, value), children) =>
+  val TabPanel = FunctionalComponent[TabPanelProps] { case TabPanelProps(index, value, children) =>
     div
       .role("tabpanel")
       .hidden(value != index)
       .id(s"simple-tabpanel-$index")(
         if (value == index) {
-          mui.Box.sx(new SystemCssProperties[Theme] { p = 3 })(mui.Typography(children))
-        } else TagMod.empty
+          Fragment(mui.Box.sx(new SystemCssProperties[Theme] { p = 3 })(mui.Typography(children)))
+        } else Fragment()
       )
   }
+
   def a11yProps(index: Int) =
     new js.Object {
       var id = s"simple-tab-$index"
@@ -38,14 +36,15 @@ object Tabs {
     }
 
   val BasicTabs =
-    ScalaFnComponent.withHooks[Unit].useStateWithReuse(0).render { (props, value: UseStateWithReuse[Int]) =>
-      def handleChange(event: SyntheticEvent[Element], newValue: Any) =
-        value.setState(newValue.asInstanceOf[Int])
+    FunctionalComponent[List[ReactElement]] { children =>
+      val (value, setValue) = Hooks.useState(0)
+      def handleChange(event: SyntheticEvent[_, _], newValue: Any) =
+        setValue(newValue.asInstanceOf[Int])
 
       mui.Box.sx(new SystemCssProperties[Theme] { width = "100%" })(
         mui.Box.sx(new SystemCssProperties[Theme] { borderBottom = 1; borderColor = "divider" })(
           mui.Tabs
-            .value(value.value)
+            .value(value)
             .onChange(handleChange)
             .`aria-label`("basic tabs example")(
               mui.Tab.normal.label("Item One").unsafeSpread(a11yProps(0)),
@@ -53,9 +52,9 @@ object Tabs {
               mui.Tab.normal.label("Item Three").unsafeSpread(a11yProps(2))
             )
         ),
-        TabPanel(TabPanelProps(index = 0, value = value.value))("Item One"),
-        TabPanel(TabPanelProps(index = 1, value = value.value))("Item Two"),
-        TabPanel(TabPanelProps(index = 2, value = value.value))("Item Three")
+        TabPanel(TabPanelProps(index = 0, value = value, children=children)),
+        TabPanel(TabPanelProps(index = 1, value = value, children=children)),
+        TabPanel(TabPanelProps(index = 2, value = value, children=children))
       )
     }
 }

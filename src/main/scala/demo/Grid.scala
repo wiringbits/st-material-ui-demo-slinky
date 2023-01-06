@@ -4,11 +4,12 @@ import com.olvind.mui.StyledComponent
 import com.olvind.mui.muiMaterial.stylesCreateThemeMod.Theme
 import com.olvind.mui.muiStyledEngine.mod.CSSObject
 import com.olvind.mui.muiSystem.styleFunctionSxStyleFunctionSxMod.SystemCssProperties
-import japgolly.scalajs.react.ScalaFnComponent
 import com.olvind.mui.muiIconsMaterial.components as muiIcons
 import com.olvind.mui.muiMaterial.colorsMod.{deepOrange, deepPurple}
 import com.olvind.mui.muiMaterial.components as mui
-import japgolly.scalajs.react.vdom.Implicits.*
+
+import slinky.core._
+import slinky.core.facade._
 
 object Grid {
 
@@ -25,7 +26,7 @@ object Grid {
       .build()
   }
 
-  val FullWidthGrid = ScalaFnComponent[Unit] { case () =>
+  val FullWidthGrid = FunctionalComponent[Unit] { case () =>
     mui.Box.sx(new SystemCssProperties[Theme] {
       flexGrow = 1.0
     })

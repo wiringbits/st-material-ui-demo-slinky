@@ -9,15 +9,17 @@ import com.olvind.mui.muiStyledEngine.mod.CSSObject
 import com.olvind.mui.muiSystem.styleFunctionSxStyleFunctionSxMod.SystemCssProperties
 import com.olvind.mui.react.components.div
 import com.olvind.mui.react.mod.CSSProperties
-import japgolly.scalajs.react.React.Fragment
-import japgolly.scalajs.react.ScalaFnComponent
-import japgolly.scalajs.react.vdom.Implicits.*
+import slinky.core._
+import slinky.core.facade._
+import slinky.web.ReactDOM
+
 import org.scalajs.dom
 
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters.*
 
-val Buttons = ScalaFnComponent[Unit] { case () =>
+
+val Buttons = FunctionalComponent[Unit] { case () =>
   Fragment(
     mui.Typography.variant("h4")("Basic button"),
     mui.Button.normal.variant("text")("Text"),
@@ -30,14 +32,14 @@ val Buttons = ScalaFnComponent[Unit] { case () =>
   )
 }
 
-val Chips = ScalaFnComponent[Unit] { case () =>
+val Chips = FunctionalComponent[Unit] { case () =>
   Fragment(
     mui.Chip.label("Chip Filled"),
     mui.Chip.label("Chip Outlines").variant("outlined")
   )
 }
 
-val TextFields = ScalaFnComponent[Unit] { case () =>
+val TextFields = FunctionalComponent[Unit] { case () =>
   Fragment(
     mui.TextField.outlined().id("outlined-basic").label("Outlined"),
     mui.TextField.filled().id("filled-basic").label("Filled"),
@@ -45,7 +47,7 @@ val TextFields = ScalaFnComponent[Unit] { case () =>
   )
 }
 
-val Avatars = ScalaFnComponent[Unit] { case () =>
+val Avatars = FunctionalComponent[Unit] { case () =>
   Fragment(
     mui.Avatar("H"),
     mui.Avatar.sx(new SystemCssProperties {
@@ -58,9 +60,8 @@ val Avatars = ScalaFnComponent[Unit] { case () =>
   )
 }
 
-val Tooltips = ScalaFnComponent[Unit] { case () =>
-  mui.Tooltip
-    .title("You don't have permission to do this")
+val Tooltips = FunctionalComponent[Unit] { case () =>
+  mui.Tooltip("You don't have permission to do this")
     .followCursor(true)(
       mui.Box.sx(new SystemCssProperties {
         bgcolor = "text.disabled"
@@ -70,14 +71,14 @@ val Tooltips = ScalaFnComponent[Unit] { case () =>
     )
 }
 
-val Progress = ScalaFnComponent[Unit] { case () =>
+val Progress = FunctionalComponent[Unit] { case () =>
   mui.Box.sx(new SystemCssProperties {
     width = "100%"
   })(
     mui.LinearProgress()
   )
 }
-val Links = ScalaFnComponent[Unit] { case () =>
+val Links = FunctionalComponent[Unit] { case () =>
   Fragment(
     mui.Link.href("#")("Link"),
     mui.Link.href("#").color("inherit")("""{'color="inherit"'}"""),
@@ -85,7 +86,7 @@ val Links = ScalaFnComponent[Unit] { case () =>
   )
 }
 
-val Menu = ScalaFnComponent[Unit] { case () =>
+val Menu = FunctionalComponent[Unit] { case () =>
   mui.Paper.sx(new SystemCssProperties {
     width = 320
     maxWidth = "100%"
@@ -125,24 +126,24 @@ val Item = div.styled
   }
   .build()
 
-val Main = ScalaFnComponent[Unit] { case () =>
+val Main = FunctionalComponent[Unit] { case () =>
   div(
     mui.Typography.variant("h1")("Material-UI 5 for Scala 3"),
     mui.Container.maxWidth("md")(
       mui.Stack
         .spacing(4.0)(
-          Item(mui.Typography.variant("h2")("Autocomplete"), AutoComplete.Asynchronous()),
-          Item(mui.Typography.variant("h2")("Avatars"), Avatars()),
-          Item(mui.Typography.variant("h2")("Buttons"), Buttons()),
-          Item(mui.Typography.variant("h2")("Chips"), Chips()),
-          Item(mui.Typography.variant("h2")("Dialog"), Dialog.SimpleDialogDemo()),
-          Item(mui.Typography.variant("h2")("Grid"), Grid.FullWidthGrid()),
-          Item(mui.Typography.variant("h2")("Links"), Links()),
-          Item(mui.Typography.variant("h2")("Menu"), Menu()),
-          Item(mui.Typography.variant("h2")("Progress"), Progress()),
-          Item(mui.Typography.variant("h2")("Tabs"), Tabs.BasicTabs()),
-          Item(mui.Typography.variant("h2")("TextFields"), TextFields()),
-          Item(mui.Typography.variant("h2")("Tooltips"), Tooltips())
+          Item(mui.Typography.variant("h2")("Autocomplete"), AutoComplete.Asynchronous(())),
+          Item(mui.Typography.variant("h2")("Avatars"), Avatars(())),
+          Item(mui.Typography.variant("h2")("Buttons"), Buttons(())),
+          Item(mui.Typography.variant("h2")("Chips"), Chips(())),
+          Item(mui.Typography.variant("h2")("Dialog"), Dialog.SimpleDialogDemo(())),
+          Item(mui.Typography.variant("h2")("Grid"), Grid.FullWidthGrid(())),
+          Item(mui.Typography.variant("h2")("Links"), Links(())),
+          Item(mui.Typography.variant("h2")("Menu"), Menu(())),
+          Item(mui.Typography.variant("h2")("Progress"), Progress(())),
+          Item(mui.Typography.variant("h2")("Tabs"), Tabs.BasicTabs(List.empty)),
+          Item(mui.Typography.variant("h2")("TextFields"), TextFields(())),
+          Item(mui.Typography.variant("h2")("Tooltips"), Tooltips(()))
         )
     )
   )
@@ -150,4 +151,4 @@ val Main = ScalaFnComponent[Unit] { case () =>
 
 @main
 def main: Unit =
-  Main().renderIntoDOM(dom.document.getElementById("app"))
+  ReactDOM.render( Main(()), dom.document.getElementById("app"))

@@ -9,23 +9,23 @@ import com.olvind.mui.muiMaterial.stylesCreateTypographyMod.Variant
 import com.olvind.mui.muiStyledEngine.mod.CSSObject
 import com.olvind.mui.muiSystem.styleFunctionSxStyleFunctionSxMod.SystemCssProperties
 import com.olvind.mui.react.components.{br, div}
-import japgolly.scalajs.react.hooks.Hooks.{UseState, UseStateWithReuse}
-import japgolly.scalajs.react.vdom.Implicits.*
-import japgolly.scalajs.react.{Callback, ScalaFnComponent}
+
+import slinky.core._
+import slinky.core.facade._
 
 object Dialog {
   val emails = List("username@gmail.com", "user02@gmail.com")
   case class SimpleDialogProps(
       open: Boolean,
       selectedValue: String,
-      onClose: String => Callback
+      onClose: String => Unit
   )
-  val SimpleDialog = ScalaFnComponent[SimpleDialogProps] { case SimpleDialogProps(open, selectedValue, onClose) =>
+  val SimpleDialog = FunctionalComponent[SimpleDialogProps] { case SimpleDialogProps(open, selectedValue, onClose) =>
     def handleClose =
-      onClose(selectedValue);
+      onClose(selectedValue)
 
-    def handleListItemClick(value: String): Callback =
-      onClose(value);
+    def handleListItemClick(value: String): Unit =
+      onClose(value)
 
     mui
       .Dialog(open = open)
@@ -60,19 +60,23 @@ object Dialog {
       )
   }
 
-  val SimpleDialogDemo = ScalaFnComponent.withHooks[Unit].useState(false).useState(emails(1)).render {
-    (props, open: UseState[Boolean], selectedValue: UseState[String]) =>
-      def handleClickOpen = open.modState(open => !open)
-      def handleClose(value: String) = open.setState(false) >> selectedValue.setState(value)
+  val SimpleDialogDemo = FunctionalComponent[Unit] { _ =>
+      val (open, setOpen) = Hooks.useState(false)
+      val (selectedValue, setSelectedValue) = Hooks.useState(emails(1))
+      def handleClickOpen = setOpen(open => !open)
+      def handleClose(value: String) =
+        setOpen(false)
+        setSelectedValue(value)
+
       div(
-        mui.Typography.variant("subtitle1").component("div")(s"Selected: ${selectedValue.value}"),
+        mui.Typography.variant("subtitle1").component("div")(s"Selected: $selectedValue"),
         br(),
         mui.Button.normal
           .variant("outlined")
           .onClick(_ => handleClickOpen)(
             "Open simple dialog"
           ),
-        SimpleDialog(SimpleDialogProps(selectedValue = selectedValue.value, open = open.value, onClose = handleClose))
+        SimpleDialog(SimpleDialogProps(selectedValue = selectedValue, open = open, onClose = handleClose))
       )
   }
 }

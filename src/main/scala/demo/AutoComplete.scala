@@ -11,12 +11,10 @@ import com.olvind.mui.muiMaterial.{autocompleteAutocompleteMod, components as mu
 import com.olvind.mui.muiStyledEngine.mod.CSSObject
 import com.olvind.mui.muiSystem.styleFunctionSxStyleFunctionSxMod.SystemCssProperties
 import com.olvind.mui.react.components.{Fragment, br, div}
-import com.olvind.mui.react.mod.{useEffect, useState}
-import japgolly.scalajs.react.hooks.Hooks.{UseState, UseStateWithReuse}
-import japgolly.scalajs.react.vdom.Implicits.*
-import japgolly.scalajs.react.vdom.all.TagMod
-import japgolly.scalajs.react.{AsyncCallback, Callback, ScalaFnComponent}
 import org.scalajs.dom.window
+
+import slinky.core._
+import slinky.core.facade._
 
 import scala.scalajs.js
 
@@ -25,12 +23,12 @@ object AutoComplete {
 
   def sleep(delay: Int) = new js.Promise[Unit]((resolve, _) => window.setTimeout(() => resolve(()), delay))
 
-  val Asynchronous = ScalaFnComponent.withHooks[Unit].render { case () =>
-    val (open, setOpen) = js.Tuple2.toScalaTuple2(useState(false))
-    val (options, setOptions) = js.Tuple2.toScalaTuple2(useState(js.Array[Film]()))
+  val Asynchronous = FunctionalComponent[Unit] { case () =>
+    val (open, setOpen) = js.Tuple2.toScalaTuple2(Hooks.useState(false))
+    val (options, setOptions) = js.Tuple2.toScalaTuple2(Hooks.useState(js.Array[Film]()))
     val loading = open && options.length == 0
 
-    useEffect(
+    Hooks.useEffect(
       { () =>
         var active = true
         if loading then sleep(1000).`then` { _ => if active then setOptions(topFilms) }
@@ -39,14 +37,14 @@ object AutoComplete {
       js.Array(loading)
     )
 
-    useEffect(() => { if (!open) setOptions(js.Array()) }, js.Array(open));
+    Hooks.useEffect(() => { if (!open) setOptions(js.Array()) }, js.Array(open));
 
     mui
       .Autocomplete[Film, false, false, false](
         options = options,
         renderInput = (params: AutocompleteRenderInputParams) => {
           val newEndAdornment = Fragment(
-            if loading then mui.CircularProgress.color("inherit").size(20) else TagMod.empty,
+            if loading then Fragment(mui.CircularProgress.color("inherit").size(20)) else Fragment(),
             params.InputProps.endAdornment
           )
 
@@ -55,14 +53,13 @@ object AutoComplete {
             .unsafeSpread(params)
             .label("Asynchronous")
             .InputProps(PartialInputProps().setEndAdornment(newEndAdornment).combineWith(params.InputProps))
-            .rawNode
         }
       )
       .set("id", "asynchronous-demo")
       .sx(new SystemCssProperties[Theme] { width = 300 })
       .open(open)
-      .onOpen(e => Callback(setOpen(true)))
-      .onClose((event, reason) => Callback(setOpen(false)))
+      .onOpen(e => setOpen(true))
+      .onClose((event, reason) => setOpen(false))
       .isOptionEqualToValue((option, value) => option.title == value.title)
       .getOptionLabel {
         case x: String  => x

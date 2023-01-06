@@ -21,7 +21,7 @@ lazy val `st-material-ui-demo` = project
       "https://oss.sonatype.org/content/repositories/snapshots"
     ),
     libraryDependencies ++= Seq(
-      "com.olvind.st-material-ui" %%% "st-material-ui-icons-scalajs-react" % "0.0.0+1-2f92bb2a-SNAPSHOT"
+        "com.olvind.st-material-ui" %%% "st-material-ui-icons-slinky" % "0.0.0+1-2f92bb2a-SNAPSHOT"
     ),
     publicDev := linkerOutputDirectory((Compile / fastLinkJS).value)
       .getAbsolutePath(),
